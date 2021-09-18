@@ -1,0 +1,71 @@
+package db
+
+import (
+	"context"
+	"errors"
+	"net/http"
+	"time"
+
+	"github.com/georgysavva/scany/pgxscan"
+	"github.com/google/uuid"
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgerrcode"
+	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
+)
+
+type UserDB struct {
+	ID        uuid.UUID `db:"id"`
+	UserName  string    `db:"username"`
+	CreatedOn time.Time `db:"created_on"`
+	LastLogin time.Time `db:"last_login"`
+}
+
+func (user *UserDB) Create() error {
+	log.Debugf("Create user %s", user.UserName)
+	creationTime := time.Now()
+
+	user.CreatedOn = creationTime
+	user.LastLogin = creationTime
+
+	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(username,created_on,last_login) VALUES($1,$3,$2)", user.UserName, user.CreatedOn, user.LastLogin); err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			switch pgErr.Code {
+			case pgerrcode.UniqueViolation:
+				log.Warnf("User with name %s already exists", user.UserName)
+				return echo.NewHTTPError(http.StatusConflict)
+			}
+		}
+		log.Errorf("Unknown error when inserting user: %v", err)
+		return echo.ErrInternalServerError
+	}
+	log.Debugf("User %s inserted into database", user.ID)
+	return nil
+}
+
+func GetUserByName(username string) (*UserDB, error) {
+	log.Debugf("Get user %s by name", username)
+
+	var users []*UserDB
+	if err := pgxscan.Select(context.Background(), getConnection(), &users, `SELECT * FROM spacelight.user WHERE username = $1`, username); err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			switch pgErr.Code {
+			case pgerrcode.NoDataFound:
+				log.Warnf("User with name %s not found", username)
+				return nil, echo.NewHTTPError(http.StatusNotFound)
+			}
+		}
+		log.Errorf("Unknown error when getting user by name: %v", err)
+		return nil, echo.ErrInternalServerError
+	}
+
+	if len(users) != 1 {
+		log.Errorf("Cant find only one user. Userlist: %v", users)
+		return nil, echo.ErrInternalServerError
+	}
+
+	log.Debugf("Got user %v", users[0])
+	return users[0], nil
+}
