@@ -9,17 +9,19 @@ import (
 
 type (
 	UserCore struct {
-		ID        uuid.UUID
-		UserName  string
-		CreatedOn time.Time
-		LastLogin time.Time
+		ID           uuid.UUID
+		UserName     string
+		UserPassword string
+		CreatedOn    time.Time
+		LastLogin    time.Time
 	}
 
 	UserDTO struct {
-		ID        uuid.UUID
-		UserName  string `json:"UserName" validate:"required,alphanum"`
-		CreatedOn time.Time
-		LastLogin time.Time
+		ID           uuid.UUID
+		UserName     string `json:"UserName" validate:"required,alphanum"`
+		UserPassword string
+		CreatedOn    time.Time
+		LastLogin    time.Time
 	}
 )
 
@@ -34,6 +36,10 @@ func (user *UserDTO) Create() (createdUser *UserDTO, err error) {
 	}
 
 	return mapToUserDTO(dbUser), nil
+}
+
+func (user *UserDTO) CheckPassword() (bool, error) {
+	return db.CheckPassword(user.ID, user.UserName, user.UserPassword)
 }
 
 func mapToUserDB(userDTO *UserDTO) *db.UserDB {

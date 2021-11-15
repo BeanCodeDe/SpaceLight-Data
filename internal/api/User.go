@@ -17,12 +17,24 @@ func InitUserInterface(group *echo.Group) {
 }
 
 func login(context echo.Context) error {
-	return context.JSON(200, "jwtToken")
+	user := new(core.UserDTO)
+	logedIn, err := user.CheckPassword()
+	if err != nil {
+		return err
+	}
+	if !logedIn {
+		return echo.ErrUnauthorized
+	}
+	token, err := createJWTToken(user.UserName)
+	if err != nil {
+		return err
+	}
+	return context.JSON(200, token)
 }
 
 func Create(context echo.Context) error {
 	user := new(core.UserDTO)
-	log.Infof("create user %s", user.UserName)
+	log.Debugf("create user %s", user.UserName)
 	if err := context.Bind(user); err != nil {
 		log.Warnf("Could not bind user ,%v", err)
 		return echo.ErrBadRequest
@@ -36,6 +48,6 @@ func Create(context echo.Context) error {
 		return err
 	}
 
-	log.Infof("created user %v", createdUser)
+	log.Debugf("created user %v", createdUser)
 	return context.JSON(201, createdUser)
 }

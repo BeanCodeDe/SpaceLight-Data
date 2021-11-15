@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 ENV CGO_ENABLED=0
-RUN go build -o spacelight ./internal
+RUN make build
 
 FROM alpine:3.14
 RUN apk --no-cache add ca-certificates
