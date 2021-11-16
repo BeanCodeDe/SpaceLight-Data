@@ -16,24 +16,25 @@ import (
 
 type UserDB struct {
 	ID        uuid.UUID `db:"id"`
-	UserName  string    `db:"username"`
+	Name      string    `db:"username"`
+	Password  string    `db:"password"`
 	CreatedOn time.Time `db:"created_on"`
 	LastLogin time.Time `db:"last_login"`
 }
 
 func (user *UserDB) Create() error {
-	log.Debugf("Create user %s", user.UserName)
+	log.Debugf("Create user %s", user.Name)
 	creationTime := time.Now()
 
 	user.CreatedOn = creationTime
 	user.LastLogin = creationTime
 
-	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(username,created_on,last_login) VALUES($1,$3,$2)", user.UserName, user.CreatedOn, user.LastLogin); err != nil {
+	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(username,password,created_on,last_login) VALUES($1,MD5($2),$3,$4)", user.Name, user.Password, user.CreatedOn, user.LastLogin); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
 			case pgerrcode.UniqueViolation:
-				log.Warnf("User with name %s already exists", user.UserName)
+				log.Warnf("User with name %s already exists", user.Name)
 				return echo.NewHTTPError(http.StatusConflict)
 			}
 		}
@@ -76,7 +77,7 @@ func CheckPassword(id uuid.UUID, username string, password string) (bool, error)
 	var passwordMatches *bool
 	if err := pgxscan.Select(context.Background(), getConnection(), &passwordMatches,
 		`SELECT EXISTS (
-		SELECT * FROM spacelight.user WHERE id = $1 AND name = $2 AND password = $3
+		SELECT * FROM spacelight.user WHERE id = $1 AND name = $2 AND password = MD5($3)
 	  )`, id, username, password); err != nil {
 		log.Errorf("Unknown error when checking password for user %s: %v", username, err)
 		return false, echo.ErrInternalServerError

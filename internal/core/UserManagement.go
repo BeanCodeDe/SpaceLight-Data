@@ -9,43 +9,48 @@ import (
 
 type (
 	UserCore struct {
-		ID           uuid.UUID
-		UserName     string
-		UserPassword string
-		CreatedOn    time.Time
-		LastLogin    time.Time
+		ID        uuid.UUID
+		Name      string
+		Password  string
+		CreatedOn time.Time
+		LastLogin time.Time
 	}
 
 	UserDTO struct {
-		ID           uuid.UUID
-		UserName     string `json:"UserName" validate:"required,alphanum"`
-		UserPassword string
-		CreatedOn    time.Time
-		LastLogin    time.Time
+		ID       uuid.UUID
+		Name     string `json:"UserName" validate:"required,alphanum"`
+		Password string
+	}
+
+	UserResponseDTO struct {
+		ID        uuid.UUID
+		Name      string
+		CreatedOn time.Time
+		LastLogin time.Time
 	}
 )
 
-func (user *UserDTO) Create() (createdUser *UserDTO, err error) {
+func (user *UserDTO) Create() (createdUser *UserResponseDTO, err error) {
 	if err = mapToUserDB(user).Create(); err != nil {
 		return nil, err
 	}
 
-	dbUser, err := db.GetUserByName(user.UserName)
+	dbUser, err := db.GetUserByName(user.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	return mapToUserDTO(dbUser), nil
+	return mapToUserResponseDTO(dbUser), nil
 }
 
 func (user *UserDTO) CheckPassword() (bool, error) {
-	return db.CheckPassword(user.ID, user.UserName, user.UserPassword)
+	return db.CheckPassword(user.ID, user.Name, user.Password)
 }
 
 func mapToUserDB(userDTO *UserDTO) *db.UserDB {
-	return &db.UserDB{ID: userDTO.ID, UserName: userDTO.UserName}
+	return &db.UserDB{ID: userDTO.ID, Name: userDTO.Name}
 }
 
-func mapToUserDTO(userDB *db.UserDB) *UserDTO {
-	return &UserDTO{ID: userDB.ID, UserName: userDB.UserName, CreatedOn: userDB.CreatedOn, LastLogin: userDB.LastLogin}
+func mapToUserResponseDTO(userDB *db.UserDB) *UserResponseDTO {
+	return &UserResponseDTO{ID: userDB.ID, Name: userDB.Name, CreatedOn: userDB.CreatedOn, LastLogin: userDB.LastLogin}
 }

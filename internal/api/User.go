@@ -25,7 +25,7 @@ func login(context echo.Context) error {
 	if !logedIn {
 		return echo.ErrUnauthorized
 	}
-	token, err := createJWTToken(user.UserName)
+	token, err := createJWTToken(user.Name)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func login(context echo.Context) error {
 
 func Create(context echo.Context) error {
 	user := new(core.UserDTO)
-	log.Debugf("create user %s", user.UserName)
+	log.Debugf("create user %s", user.Name)
 	if err := context.Bind(user); err != nil {
 		log.Warnf("Could not bind user ,%v", err)
 		return echo.ErrBadRequest
