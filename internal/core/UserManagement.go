@@ -18,8 +18,8 @@ type (
 
 	UserDTO struct {
 		ID       uuid.UUID
-		Name     string `json:"UserName" validate:"required,alphanum"`
-		Password string
+		Name     string `json:"Name" validate:"required,alphanum"`
+		Password string `json:"Password" validate:"required"`
 	}
 
 	UserResponseDTO struct {
