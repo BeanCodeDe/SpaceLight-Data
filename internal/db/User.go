@@ -16,7 +16,7 @@ import (
 
 type UserDB struct {
 	ID        uuid.UUID `db:"id"`
-	Name      string    `db:"username"`
+	Name      string    `db:"name"`
 	Password  string    `db:"password"`
 	CreatedOn time.Time `db:"created_on"`
 	LastLogin time.Time `db:"last_login"`
