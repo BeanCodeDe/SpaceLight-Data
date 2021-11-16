@@ -3,6 +3,7 @@ package main
 import (
 	"SpaceLight/internal/api"
 	"SpaceLight/internal/db"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
@@ -22,6 +23,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 
 func main() {
 	defer handleExit()
+	setLogLevel(os.Getenv("SPACELIGHT_LOG_LEVEL"))
 	log.Info("Start Server")
 	db.Init()
 	e := echo.New()
@@ -30,6 +32,17 @@ func main() {
 	userGroup := e.Group(api.UserRootPath)
 	api.InitUserInterface(userGroup)
 	e.Logger.Fatal(e.Start(":1323"))
+}
+
+func setLogLevel(logLevel string) {
+	switch logLevel {
+	case "debug":
+		log.SetLevel(log.DebugLevel)
+	case "info":
+		log.SetLevel(log.InfoLevel)
+	case "warn":
+		log.SetLevel(log.WarnLevel)
+	}
 }
 
 func handleExit() {
