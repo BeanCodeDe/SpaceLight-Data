@@ -36,7 +36,7 @@ type (
 )
 
 func (user *UserCreateDTO) Create() (createdUser *UserResponseDTO, err error) {
-	if err = mapToUserDB(user).Create(); err != nil {
+	if err = user.mapToUserDB().Create(); err != nil {
 		return nil, err
 	}
 
@@ -52,8 +52,8 @@ func (user *UserLoginDTO) CheckPassword() (bool, error) {
 	return db.CheckPassword(user.ID, user.Name, user.Password)
 }
 
-func mapToUserDB(userDTO *UserCreateDTO) *db.UserDB {
-	return &db.UserDB{Name: userDTO.Name}
+func (userCreateDTO *UserCreateDTO) mapToUserDB() *db.UserDB {
+	return &db.UserDB{Name: userCreateDTO.Name, Password: userCreateDTO.Password}
 }
 
 func mapToUserResponseDTO(userDB *db.UserDB) *UserResponseDTO {
