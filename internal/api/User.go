@@ -17,7 +17,7 @@ func InitUserInterface(group *echo.Group) {
 }
 
 func login(context echo.Context) error {
-	user := new(core.UserDTO)
+	user := new(core.UserLoginDTO)
 	logedIn, err := user.CheckPassword()
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func login(context echo.Context) error {
 }
 
 func Create(context echo.Context) error {
-	user := new(core.UserDTO)
+	user := new(core.UserCreateDTO)
 	log.Debugf("create user %s", user.Name)
 	if err := context.Bind(user); err != nil {
 		log.Warnf("Could not bind user ,%v", err)

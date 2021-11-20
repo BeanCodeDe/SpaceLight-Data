@@ -16,7 +16,12 @@ type (
 		LastLogin time.Time
 	}
 
-	UserDTO struct {
+	UserCreateDTO struct {
+		Name     string `json:"Name" validate:"required,alphanum"`
+		Password string `json:"Password" validate:"required"`
+	}
+
+	UserLoginDTO struct {
 		ID       uuid.UUID
 		Name     string `json:"Name" validate:"required,alphanum"`
 		Password string `json:"Password" validate:"required"`
@@ -30,7 +35,7 @@ type (
 	}
 )
 
-func (user *UserDTO) Create() (createdUser *UserResponseDTO, err error) {
+func (user *UserCreateDTO) Create() (createdUser *UserResponseDTO, err error) {
 	if err = mapToUserDB(user).Create(); err != nil {
 		return nil, err
 	}
@@ -43,12 +48,12 @@ func (user *UserDTO) Create() (createdUser *UserResponseDTO, err error) {
 	return mapToUserResponseDTO(dbUser), nil
 }
 
-func (user *UserDTO) CheckPassword() (bool, error) {
+func (user *UserLoginDTO) CheckPassword() (bool, error) {
 	return db.CheckPassword(user.ID, user.Name, user.Password)
 }
 
-func mapToUserDB(userDTO *UserDTO) *db.UserDB {
-	return &db.UserDB{ID: userDTO.ID, Name: userDTO.Name}
+func mapToUserDB(userDTO *UserCreateDTO) *db.UserDB {
+	return &db.UserDB{Name: userDTO.Name}
 }
 
 func mapToUserResponseDTO(userDB *db.UserDB) *UserResponseDTO {
