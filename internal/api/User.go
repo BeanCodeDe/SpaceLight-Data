@@ -2,6 +2,7 @@ package api
 
 import (
 	"SpaceLight/internal/core"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 
@@ -29,7 +30,7 @@ func login(context echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return context.JSON(200, token)
+	return context.JSON(http.StatusOK, token)
 }
 
 func Create(context echo.Context) error {
@@ -49,5 +50,5 @@ func Create(context echo.Context) error {
 	}
 
 	log.Debugf("created user %v", createdUser)
-	return context.JSON(201, createdUser)
+	return context.JSON(http.StatusCreated, createdUser)
 }

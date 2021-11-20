@@ -22,9 +22,9 @@ type (
 	}
 
 	UserLoginDTO struct {
-		ID       uuid.UUID
-		Name     string `json:"Name" validate:"required,alphanum"`
-		Password string `json:"Password" validate:"required"`
+		ID       uuid.UUID `json:"ID"`
+		Name     string    `json:"Name" validate:"required,alphanum"`
+		Password string    `json:"Password" validate:"required"`
 	}
 
 	UserResponseDTO struct {
