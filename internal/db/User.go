@@ -32,7 +32,7 @@ func (user *UserDB) Create() error {
 
 	hash := getHash()
 
-	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(name,password,salt,created_on,last_login) VALUES($1,MD5(CONCAT($2)),$3,$4,$5)", user.Name, user.Password+hash, hash, user.CreatedOn, user.LastLogin); err != nil {
+	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(name,password,salt,created_on,last_login) VALUES($1,MD5($2),$3,$4,$5)", user.Name, user.Password+hash, hash, user.CreatedOn, user.LastLogin); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
@@ -62,7 +62,7 @@ func GetUserByName(username string) (*UserDB, error) {
 	log.Debugf("Get user %s by name", username)
 
 	var users []*UserDB
-	if err := pgxscan.Select(context.Background(), getConnection(), &users, `SELECT * FROM spacelight.user WHERE name = $1`, username); err != nil {
+	if err := pgxscan.Select(context.Background(), getConnection(), &users, `SELECT name,created_on,last_login FROM spacelight.user WHERE name = $1`, username); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
