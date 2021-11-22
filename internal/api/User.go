@@ -19,7 +19,7 @@ func InitUserInterface(group *echo.Group) {
 
 func login(context echo.Context) error {
 	user := new(core.UserLoginDTO)
-	log.Debugf("login user %v", user)
+	log.Debugf("login user %v", &user)
 	logedIn, err := user.CheckPassword()
 	if err != nil {
 		log.Warnf("Could not check password, %v", err)
@@ -40,7 +40,7 @@ func login(context echo.Context) error {
 
 func Create(context echo.Context) error {
 	user := new(core.UserCreateDTO)
-	log.Debugf("create user %v", user)
+	log.Debugf("create user %v", &user)
 	if err := context.Bind(user); err != nil {
 		log.Warnf("Could not bind user, %v", err)
 		return echo.ErrBadRequest

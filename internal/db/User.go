@@ -29,7 +29,7 @@ func (user *UserDB) Create() error {
 	user.CreatedOn = creationTime
 	user.LastLogin = creationTime
 
-	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(name,password,created_on,last_login) VALUES($1,MD5($2+$3),$3,$4,$5)", user.Name, user.Password, uuid.New(), user.CreatedOn, user.LastLogin); err != nil {
+	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(name,password,created_on,last_login) VALUES($1,MD5(CONCAT($2,$3)),$3,$4,$5)", user.Name, user.Password, uuid.New(), user.CreatedOn, user.LastLogin); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
