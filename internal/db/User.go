@@ -41,7 +41,7 @@ func (user *UserDB) Create() error {
 		log.Errorf("Unknown error when inserting user: %v", err)
 		return echo.ErrInternalServerError
 	}
-	log.Debugf("User %s inserted into database", user.ID)
+	log.Debugf("User %s inserted into database", user.Name)
 	return nil
 }
 
