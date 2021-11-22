@@ -12,7 +12,7 @@ import (
 const UserRootPath = "/user"
 
 func InitUserInterface(group *echo.Group) {
-	group.GET("", login)
+	group.GET("/login", login)
 	group.PUT("", Create)
 
 }
