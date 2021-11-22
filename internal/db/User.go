@@ -74,7 +74,7 @@ func GetUserByName(username string) (*UserDB, error) {
 func CheckPassword(id uuid.UUID, username string, password string) (bool, error) {
 	log.Debugf("Check password for user %s", username)
 
-	var passwordMatches *bool
+	var passwordMatches bool
 	if err := pgxscan.Select(context.Background(), getConnection(), &passwordMatches,
 		`SELECT EXISTS (
 		SELECT * FROM spacelight.user WHERE id = $1 AND name = $2 AND password = MD5($3)
@@ -84,5 +84,5 @@ func CheckPassword(id uuid.UUID, username string, password string) (bool, error)
 	}
 
 	log.Debugf("Password for user %v is correct", username)
-	return *passwordMatches, nil
+	return passwordMatches, nil
 }
