@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"net/http"
 	"time"
@@ -29,7 +30,7 @@ func (user *UserDB) Create() error {
 	user.CreatedOn = creationTime
 	user.LastLogin = creationTime
 
-	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(name,password,salt,created_on,last_login) VALUES($1,MD5(CONCAT($2,$3)),$3,$4,$5)", user.Name, user.Password, uuid.New(), user.CreatedOn, user.LastLogin); err != nil {
+	if _, err := getConnection().Exec(context.Background(), "INSERT INTO spacelight.user(name,password,salt,created_on,last_login) VALUES($1,MD5(CONCAT($2,$3)),$3,$4,$5)", user.Name, user.Password, getHash(), user.CreatedOn, user.LastLogin); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
@@ -43,6 +44,16 @@ func (user *UserDB) Create() error {
 	}
 	log.Debugf("User %s inserted into database", user.Name)
 	return nil
+}
+
+func getHash() string {
+	const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	var bytes = make([]byte, 32)
+	rand.Read(bytes)
+	for i, b := range bytes {
+		bytes[i] = alphanum[b%byte(len(alphanum))]
+	}
+	return string(bytes)
 }
 
 func GetUserByName(username string) (*UserDB, error) {
