@@ -87,15 +87,22 @@ func GetUserByName(username string) (*UserDB, error) {
 func CheckPassword(id uuid.UUID, username string, password string) (bool, error) {
 	log.Debugf("Check password for user %s", username)
 
-	var passwordMatches bool
-	if err := pgxscan.Select(context.Background(), getConnection(), passwordMatches,
-		`SELECT EXISTS (
-		SELECT * FROM spacelight.user WHERE id = $1 AND name = $2 AND password = MD5($3)
-	  )`, id, username, password); err != nil {
+	type result struct {
+		Found bool
+	}
+
+	var test []*result
+
+	if err := pgxscan.Select(context.Background(), getConnection(), &test,
+		`
+		SELECT EXISTS(
+			SELECT * FROM spacelight.user WHERE id = $1 AND name = $2 AND password = MD5(CONCAT($3::text,(SELECT salt FROM spacelight.user WHERE id = $1 AND name = $2)::text))
+		) as found`,
+		id, username, password); err != nil {
 		log.Errorf("Unknown error when checking password for user %s: %v", username, err)
 		return false, echo.ErrInternalServerError
 	}
 
-	log.Debugf("Password for user %v is correct", username)
-	return passwordMatches, nil
+	log.Debugf("Password for user %v is %v", username, test[0].Found)
+	return test[0].Found, nil
 }
