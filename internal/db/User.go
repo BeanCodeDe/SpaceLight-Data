@@ -62,7 +62,7 @@ func GetUserByName(username string) (*UserDB, error) {
 	log.Debugf("Get user %s by name", username)
 
 	var users []*UserDB
-	if err := pgxscan.Select(context.Background(), getConnection(), &users, `SELECT name,created_on,last_login FROM spacelight.user WHERE name = $1`, username); err != nil {
+	if err := pgxscan.Select(context.Background(), getConnection(), &users, `SELECT id,name,created_on,last_login FROM spacelight.user WHERE name = $1`, username); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
