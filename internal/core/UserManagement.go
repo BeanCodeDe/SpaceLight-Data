@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
 )
 
 type (
@@ -48,8 +50,18 @@ func (user *UserCreateDTO) Create() (createdUser *UserResponseDTO, err error) {
 	return mapToUserResponseDTO(dbUser), nil
 }
 
-func (user *UserLoginDTO) CheckPassword() (bool, error) {
-	return db.CheckPassword(user.ID, user.Name, user.Password)
+func (user *UserLoginDTO) Login() error {
+	logedIn, err := db.CheckPassword(user.ID, user.Name, user.Password)
+	if err != nil {
+		log.Warnf("Could not check password, %v", err)
+		return err
+	}
+	if !logedIn {
+		log.Debugf("wrong auth data, %v", user)
+		return echo.ErrUnauthorized
+	}
+
+	return nil
 }
 
 func (userCreateDTO *UserCreateDTO) mapToUserDB() *db.UserDB {

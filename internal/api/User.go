@@ -24,18 +24,13 @@ func login(context echo.Context) error {
 		return echo.ErrBadRequest
 	}
 	log.Debugf("login user %v", user)
-	logedIn, err := user.CheckPassword()
+	err := user.Login()
 	if err != nil {
-		log.Warnf("Could not check password, %v", err)
 		return err
 	}
-	if !logedIn {
-		log.Debugf("wrong auth data, %v", user)
-		return echo.ErrUnauthorized
-	}
+
 	token, err := createJWTToken(user.Name)
 	if err != nil {
-		log.Warnf("Could not create token, %v", err)
 		return err
 	}
 	log.Debugf("loged in user %v", user)

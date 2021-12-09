@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 )
 
 type claims struct {
@@ -13,6 +15,7 @@ type claims struct {
 }
 
 func createJWTToken(userName string) (string, error) {
+	log.Debugf("create JWT token")
 	expirationTime := time.Now().Add(5 * time.Minute)
 
 	claims := &claims{
@@ -23,5 +26,11 @@ func createJWTToken(userName string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(os.Getenv("SPACELIGHT_JWT_SECRET"))
+	signedToken, err := token.SignedString(os.Getenv("SPACELIGHT_JWT_SECRET"))
+	if err != nil {
+		log.Errorf("Token creation failed, %v", err)
+		return "", echo.ErrInternalServerError
+	}
+	log.Debugf("JWT token created")
+	return signedToken, nil
 }
