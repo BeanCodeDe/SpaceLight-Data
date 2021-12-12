@@ -26,7 +26,7 @@ func createJWTToken(userName string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString(os.Getenv("SPACELIGHT_JWT_SECRET"))
+	signedToken, err := token.SignedString([]byte(os.Getenv("SPACELIGHT_JWT_SECRET")))
 	if err != nil {
 		log.Errorf("Token creation failed, %v", err)
 		return "", echo.ErrInternalServerError
