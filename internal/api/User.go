@@ -34,7 +34,7 @@ func login(context echo.Context) error {
 		return err
 	}
 	log.Debugf("loged in user %v", user)
-	return context.JSON(http.StatusOK, token)
+	return context.String(http.StatusOK, token)
 }
 
 func Create(context echo.Context) error {

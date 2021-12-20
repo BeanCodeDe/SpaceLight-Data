@@ -31,6 +31,7 @@ func createJWTToken(userName string) (string, error) {
 		log.Errorf("Token creation failed, %v", err)
 		return "", echo.ErrInternalServerError
 	}
+
 	log.Debugf("JWT token created")
 	return signedToken, nil
 }
