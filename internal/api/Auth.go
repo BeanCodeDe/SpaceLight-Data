@@ -5,21 +5,22 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 )
 
 type claims struct {
-	UserName string `json:"username"`
+	UserId uuid.UUID `json:"UserId"`
 	jwt.StandardClaims
 }
 
-func createJWTToken(userName string) (string, error) {
+func createJWTToken(userId uuid.UUID) (string, error) {
 	log.Debugf("create JWT token")
 	expirationTime := time.Now().Add(5 * time.Minute)
 
 	claims := &claims{
-		UserName: userName,
+		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

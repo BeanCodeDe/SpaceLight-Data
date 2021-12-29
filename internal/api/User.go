@@ -13,8 +13,7 @@ const UserRootPath = "/user"
 
 func InitUserInterface(group *echo.Group) {
 	group.GET("/login", login)
-	group.PUT("", Create)
-
+	group.PUT("", create)
 }
 
 func login(context echo.Context) error {
@@ -29,7 +28,7 @@ func login(context echo.Context) error {
 		return err
 	}
 
-	token, err := createJWTToken(user.Name)
+	token, err := createJWTToken(user.ID)
 	if err != nil {
 		return err
 	}
@@ -37,7 +36,7 @@ func login(context echo.Context) error {
 	return context.String(http.StatusOK, token)
 }
 
-func Create(context echo.Context) error {
+func create(context echo.Context) error {
 	user := new(core.UserCreateDTO)
 	if err := context.Bind(user); err != nil {
 		log.Warnf("Could not bind user, %v", err)
