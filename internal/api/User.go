@@ -42,22 +42,23 @@ func InitUserInterface(group *echo.Group) {
 }
 
 func login(context echo.Context) error {
+	log.Debugf("Login some user")
 	userCore, err := bind(context, new(userLoginDTO))
 	if err != nil {
 		return err
 	}
 
-	log.Debugf("login user %s, %s", userCore.ID, userCore.Name)
 	token, err := userCore.Login()
 	if err != nil {
 		return err
 	}
 
-	log.Debugf("loged in user %s, %s", userCore.ID, userCore.Name)
+	log.Debugf("Logged in user %s, %s", userCore.ID, userCore.Name)
 	return context.String(http.StatusOK, token)
 }
 
 func create(context echo.Context) error {
+	log.Debugf("Create some user")
 	userCore, err := bind(context, new(userCreateDTO))
 	if err != nil {
 		return err
@@ -67,7 +68,7 @@ func create(context echo.Context) error {
 		return err
 	}
 
-	log.Debugf("created user %s, %s", createdUser.ID, createdUser.Name)
+	log.Debugf("Created user %s, %s", createdUser.ID, createdUser.Name)
 	userResponseDTO := mapToUserResponseDTO(createdUser)
 	return context.JSON(http.StatusCreated, userResponseDTO)
 }
@@ -85,11 +86,12 @@ func mapToUserResponseDTO(user *core.UserCore) *userResponseDTO {
 }
 
 func bind(context echo.Context, toBindUser user) (*core.UserCore, error) {
+	log.Debugf("Bind context to user %v", context)
 	if err := context.Bind(toBindUser); err != nil {
 		log.Warnf("Could not bind user, %v", err)
 		return nil, echo.ErrBadRequest
 	}
-	log.Debugf("create user %v", toBindUser)
+	log.Debugf("User bind %v", toBindUser)
 	if err := context.Validate(toBindUser); err != nil {
 		log.Warnf("Could not validate user, %v", err)
 		return nil, echo.ErrBadRequest

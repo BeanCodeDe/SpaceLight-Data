@@ -20,6 +20,7 @@ type (
 )
 
 func (user *UserCore) Create() (createdUser *UserCore, err error) {
+	log.Debugf("Create user %s, %s", user.Name)
 	if err = user.mapToUserDB().Create(); err != nil {
 		return nil, err
 	}
@@ -33,13 +34,14 @@ func (user *UserCore) Create() (createdUser *UserCore, err error) {
 }
 
 func (user *UserCore) Login() (string, error) {
+	log.Debugf("Login user %s, %s", user.ID, user.Name)
 	logedIn, err := db.CheckPassword(user.ID, user.Name, user.Password)
 	if err != nil {
 		log.Warnf("Could not check password, %v", err)
 		return "", err
 	}
 	if !logedIn {
-		log.Debugf("wrong auth data, %v", user)
+		log.Debugf("Wrong auth data, %v", user)
 		return "", echo.ErrUnauthorized
 	}
 
