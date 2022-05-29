@@ -50,7 +50,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		claims := claims{}
-		if time.Now().After(time.Unix(claims.ExpiresAt, 0)) {
+		if time.Now().Before(time.Unix(claims.ExpiresAt, 0)) {
 			log.Debugf("Token is passed expire date")
 			return echo.ErrUnauthorized
 		}
