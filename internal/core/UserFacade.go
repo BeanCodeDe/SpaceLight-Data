@@ -1,6 +1,7 @@
 package core
 
 import (
+	"SpaceLight/internal/auth"
 	"SpaceLight/internal/db"
 	"time"
 
@@ -45,7 +46,7 @@ func (user *UserCore) Login() (string, error) {
 		return "", echo.ErrUnauthorized
 	}
 
-	return createJWTToken(user.ID)
+	return auth.CreateJWTToken(user.ID)
 }
 
 func (user *UserCore) mapToUserDB() *db.UserDB {

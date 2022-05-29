@@ -2,6 +2,7 @@ package main
 
 import (
 	"SpaceLight/internal/api"
+	"SpaceLight/internal/auth"
 	"SpaceLight/internal/db"
 	"os"
 
@@ -28,9 +29,11 @@ func main() {
 	db.Init()
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
-	//e.Use(GetJWTConfig())
 	userGroup := e.Group(api.UserRootPath)
 	api.InitUserInterface(userGroup)
+	profilGroup := e.Group(api.ProfilRootPath)
+	profilGroup.Use(auth.AuthMiddleware)
+	api.InitProfilInterface(profilGroup)
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
