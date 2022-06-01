@@ -24,7 +24,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 
 func main() {
 	defer handleExit()
-	setLogLevel(os.Getenv("SPACELIGHT_LOG_LEVEL"))
+	setLogLevel(os.Getenv("LOG_LEVEL"))
 	log.Info("Start Server")
 	db.Init()
 	e := echo.New()

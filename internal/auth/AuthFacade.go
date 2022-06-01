@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var secret = os.Getenv("SPACELIGHT_JWT_SECRET")
+var secret = os.Getenv("JWT_SECRET")
 
 const headerName = "auth"
 
