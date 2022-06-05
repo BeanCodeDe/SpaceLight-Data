@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-	"os"
 
 	log "github.com/sirupsen/logrus"
 
@@ -29,16 +28,11 @@ func Init() {
 	dbpool, err = pgxpool.Connect(context.Background(), psqlInfo)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
-		os.Exit(1)
 	}
 }
 
 func Close() {
 	dbpool.Close()
-}
-
-func getConnection() *pgxpool.Pool {
-	return dbpool
 }
 
 func dbConfig() Config {

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"SpaceLight/internal/api"
-	"SpaceLight/internal/auth"
-	"SpaceLight/internal/db"
 	"os"
 
+	"github.com/BeanCodeDe/SpaceLight-AuthMiddleware/authAdapter"
+	"github.com/BeanCodeDe/SpaceLight-Data/internal/api"
+	"github.com/BeanCodeDe/SpaceLight-Data/internal/db"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 
@@ -27,12 +27,14 @@ func main() {
 	setLogLevel(os.Getenv("LOG_LEVEL"))
 	log.Info("Start Server")
 	db.Init()
+	err := authAdapter.Init()
+	if err != nil {
+		log.Fatalf("Error while init authAdapter: %v", err)
+	}
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
-	userGroup := e.Group(api.UserRootPath)
-	api.InitUserInterface(userGroup)
 	profilGroup := e.Group(api.ProfilRootPath)
-	profilGroup.Use(auth.AuthMiddleware)
+	profilGroup.Use(authAdapter.AuthMiddleware)
 	api.InitProfilInterface(profilGroup)
 	e.Logger.Fatal(e.Start(":1323"))
 }
