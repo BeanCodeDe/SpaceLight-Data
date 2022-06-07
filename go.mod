@@ -3,7 +3,7 @@ module github.com/BeanCodeDe/SpaceLight-Data
 go 1.18
 
 require (
-	github.com/BeanCodeDe/SpaceLight-AuthMiddleware v0.0.0-20220607210641-42aa053e140a
+	github.com/BeanCodeDe/SpaceLight-AuthMiddleware v0.0.0-20220607211901-e22b0b05c5f9
 	github.com/georgysavva/scany v1.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
