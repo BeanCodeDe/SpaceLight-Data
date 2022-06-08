@@ -32,6 +32,7 @@ func main() {
 		log.Fatalf("Error while init authAdapter: %v", err)
 	}
 	e := echo.New()
+	e.HTTPErrorHandler = api.CustomHTTPErrorHandler
 	e.Validator = &CustomValidator{validator: validator.New()}
 	profilGroup := e.Group(api.ProfilRootPath)
 	profilGroup.Use(authAdapter.AuthMiddleware)
