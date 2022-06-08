@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/BeanCodeDe/SpaceLight-AuthMiddleware/authAdapter"
 	"github.com/labstack/echo/v4"
 
 	log "github.com/sirupsen/logrus"
@@ -15,7 +16,7 @@ func InitProfilInterface(group *echo.Group) {
 }
 
 func profil(context echo.Context) error {
-	log.Debugf("Get Profile")
-
+	log.Debugf("Get Profile: %v", context)
+	log.Debugf("header %s", context.Response().Header().Get(authAdapter.AuthName))
 	return context.String(http.StatusOK, "")
 }
