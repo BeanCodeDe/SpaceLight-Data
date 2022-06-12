@@ -3,7 +3,7 @@ module github.com/BeanCodeDe/SpaceLight-Data
 go 1.18
 
 require (
-	github.com/BeanCodeDe/SpaceLight-AuthMiddleware v0.0.0-20220612171501-861dd10793be
+	github.com/BeanCodeDe/SpaceLight-AuthMiddleware v0.0.0-20220612121130-2e9f94e30b69
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/sirupsen/logrus v1.8.1
