@@ -27,7 +27,7 @@ type (
 
 func InitProfilInterface(group *echo.Group) {
 	group.GET("", getProfil, authAdapter.CheckToken)
-	group.PUT("", createProfil, authAdapter.CheckToken, authAdapter.CheckRole(authAdapter.UserRole))
+	group.PUT("", createProfil)
 }
 
 func getProfil(context echo.Context) error {
