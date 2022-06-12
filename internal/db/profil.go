@@ -32,7 +32,7 @@ func GetProfilById(userId uuid.UUID) (*ProfilDB, error) {
 	log.Debugf("Get profil by UserId %s", userId)
 
 	var profils []*ProfilDB
-	if err := pgxscan.Select(context.Background(), getConnection(), &profils, `SELECT user_id, name FROM spacelight.user WHERE user_id = $1`, userId); err != nil {
+	if err := pgxscan.Select(context.Background(), getConnection(), &profils, `SELECT user_id, name FROM spacelight.profil WHERE user_id = $1`, userId); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
