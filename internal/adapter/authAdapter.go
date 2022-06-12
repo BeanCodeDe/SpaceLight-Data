@@ -36,6 +36,9 @@ func LoginService() {
 
 	client := &http.Client{}
 
+	log.Debugf("AuthURL: %s", authLoginUrl)
+	log.Debugf("json: %s", loginJson)
+	log.Debugf("byte: %v", jsonReq)
 	req, err := http.NewRequest(http.MethodGet, authLoginUrl, bytes.NewBuffer(jsonReq))
 	if err != nil {
 		log.Fatalf("Service couldn't create login request: %v", err)
