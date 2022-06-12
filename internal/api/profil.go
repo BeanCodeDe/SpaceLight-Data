@@ -37,7 +37,7 @@ func getProfil(context echo.Context) error {
 
 func createProfil(context echo.Context) error {
 	log.Debugf("Create some profil")
-	profilCore, password, err := bindCreationDTO(context, *new(profilCreateDTO))
+	profilCore, password, err := bindCreationDTO(context, new(profilCreateDTO))
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func mapToProfilResponseDTO(profil *core.ProfilCore) *profilResponseDTO {
 	return &profilResponseDTO{UserId: profil.UserId, Name: profil.Name}
 }
 
-func bindCreationDTO(context echo.Context, toBindProfil profilCreateDTO) (*core.ProfilCore, string, error) {
+func bindCreationDTO(context echo.Context, toBindProfil *profilCreateDTO) (*core.ProfilCore, string, error) {
 	log.Debugf("Bind context to profil %v", context)
 	if err := context.Bind(toBindProfil); err != nil {
 		log.Warnf("Could not bind profil, %v", err)
