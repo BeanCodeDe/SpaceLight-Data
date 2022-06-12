@@ -88,7 +88,7 @@ func CreateUser(password string) (uuid.UUID, error) {
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusCreated {
 		log.Errorf("Status from auth service is not ok but: %v", resp.StatusCode)
 		return uuid.Nil, dataErr.UnknownError
 	}

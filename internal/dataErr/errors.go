@@ -13,6 +13,6 @@ func (m *CustomError) Error() string {
 
 var (
 	ProfilForUserNotFoundError = &CustomError{"profil for user not found", echo.ErrNotFound.Code}
-	WrongAuthDataError         = &CustomError{"wrong auth data", echo.ErrForbidden.Code}
+	WrongAuthDataError         = &CustomError{"wrong auth data", echo.ErrUnauthorized.Code}
 	UnknownError               = &CustomError{"unknown error", echo.ErrInternalServerError.Code}
 )
