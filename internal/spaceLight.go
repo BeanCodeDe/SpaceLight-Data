@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/BeanCodeDe/SpaceLight-AuthMiddleware/authAdapter"
+	"github.com/BeanCodeDe/SpaceLight-Data/internal/adapter"
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/api"
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/config"
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/db"
@@ -27,6 +28,7 @@ func main() {
 	log.Info("Start Server")
 	db.Init()
 	err := authAdapter.Init()
+	adapter.LoginService()
 	if err != nil {
 		log.Fatalf("Error while init authAdapter: %v", err)
 	}
@@ -46,7 +48,11 @@ func setLogLevel(logLevel string) {
 		log.SetLevel(log.InfoLevel)
 	case "warn":
 		log.SetLevel(log.WarnLevel)
+	default:
+		log.SetLevel(log.DebugLevel)
+		log.Errorf("Log level %s unknow", logLevel)
 	}
+
 }
 
 func handleExit() {

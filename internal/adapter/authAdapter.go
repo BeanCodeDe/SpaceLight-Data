@@ -24,10 +24,10 @@ type userCreateDTO struct {
 }
 
 var (
-	serviceToken = loginService()
+	serviceToken string
 )
 
-func loginService() string {
+func LoginService() {
 	log.Debug("Login service")
 	authLoginUrl := config.AuthLoginUrl
 
@@ -58,10 +58,8 @@ func loginService() string {
 		log.Fatalf("Body with token coulnd't be read: %v", err)
 	}
 
-	stringToken := string(bodyBytes)
-
+	serviceToken = string(bodyBytes)
 	log.Debug("Service is logged in")
-	return stringToken
 }
 
 func CreateUser(password string) (uuid.UUID, error) {
