@@ -66,14 +66,14 @@ func loginService() string {
 
 func CreateUser(password string) (uuid.UUID, error) {
 	log.Debug("Create user")
-	authCreateUserUrl := config.AuthCreateUserUrl
+	authUserUrl := config.AuthUserUrl
 
 	createJson := fmt.Sprintf(createUserJson, password)
 	jsonReq := []byte(createJson)
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest(http.MethodPut, authCreateUserUrl, bytes.NewBuffer(jsonReq))
+	req, err := http.NewRequest(http.MethodPut, authUserUrl, bytes.NewBuffer(jsonReq))
 	if err != nil {
 		log.Errorf("Service couldn't create login request: %v", err)
 		return uuid.Nil, dataErr.UnknownError

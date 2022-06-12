@@ -7,10 +7,10 @@ var (
 	LogLevel = os.Getenv("LOG_LEVEL")
 
 	//Auth
-	AuthLoginUrl      = os.Getenv("AUTH_LOGIN_URL")
-	ServiceId         = os.Getenv("SERVICE_ID")
-	ServicePassword   = os.Getenv("SERVICE_PASSWORD")
-	AuthCreateUserUrl = os.Getenv("AUTH_CREATE_USER_URL")
+	AuthLoginUrl    = os.Getenv("AUTH_LOGIN_URL")
+	ServiceId       = os.Getenv("SERVICE_ID")
+	ServicePassword = os.Getenv("SERVICE_PASSWORD")
+	AuthUserUrl     = os.Getenv("AUTH_USER_URL")
 
 	//Database
 	PostgresUser     = os.Getenv("POSTGRES_USER")
