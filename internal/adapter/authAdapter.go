@@ -102,6 +102,6 @@ func CreateUser(password string) (uuid.UUID, error) {
 
 	var user userCreateDTO
 	json.Unmarshal([]byte(userCreateString), &user)
-	log.Debug("User Created successful")
+	log.Debug("User %s Created successful", user.ID)
 	return user.ID, nil
 }
