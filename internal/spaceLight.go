@@ -1,10 +1,9 @@
 package main
 
 import (
-	"os"
-
 	"github.com/BeanCodeDe/SpaceLight-AuthMiddleware/authAdapter"
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/api"
+	"github.com/BeanCodeDe/SpaceLight-Data/internal/config"
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/db"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
@@ -24,7 +23,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 
 func main() {
 	defer handleExit()
-	setLogLevel(os.Getenv("LOG_LEVEL"))
+	setLogLevel(config.LogLevel)
 	log.Info("Start Server")
 	db.Init()
 	err := authAdapter.Init()
@@ -35,7 +34,6 @@ func main() {
 	e.HTTPErrorHandler = api.CustomHTTPErrorHandler
 	e.Validator = &CustomValidator{validator: validator.New()}
 	profilGroup := e.Group(api.ProfilRootPath)
-	profilGroup.Use(authAdapter.AuthMiddleware)
 	api.InitProfilInterface(profilGroup)
 	e.Logger.Fatal(e.Start(":1323"))
 }
