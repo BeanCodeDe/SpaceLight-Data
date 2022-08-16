@@ -32,7 +32,7 @@ func InitProfilInterface(group *echo.Group) {
 
 func getProfil(context echo.Context) error {
 	log.Debugf("Get Profile")
-	claims := context.Get(authAdapter.ClaimName).(authAdapter.Claims)
+	claims := context.Get(authAdapter.ClaimName).(*authAdapter.Claims)
 
 	profil, err := core.LoadProfil(claims.UserId)
 	if err != nil {
