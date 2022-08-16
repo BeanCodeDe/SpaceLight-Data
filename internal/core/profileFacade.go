@@ -35,6 +35,15 @@ func (profil *ProfilCore) Create(password string) (*ProfilCore, error) {
 	return mapToUserCore(dbProfil), nil
 }
 
+func LoadProfil(userId uuid.UUID) (*ProfilCore, error) {
+	dbProfil, err := db.GetProfilById(userId)
+	if err != nil {
+		log.Errorf("Something went wrong, while getting profil: %v", err)
+		return nil, err
+	}
+	return mapToUserCore(dbProfil), nil
+}
+
 func (profil *ProfilCore) mapToProfilDB() *db.ProfilDB {
 	return &db.ProfilDB{UserId: profil.UserId, Name: profil.Name}
 }

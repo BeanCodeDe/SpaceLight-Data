@@ -32,7 +32,15 @@ func InitProfilInterface(group *echo.Group) {
 
 func getProfil(context echo.Context) error {
 	log.Debugf("Get Profile")
-	return context.String(http.StatusOK, "")
+	claims := context.Get(authAdapter.ClaimName).(authAdapter.Claims)
+
+	profil, err := core.LoadProfil(claims.UserId)
+	if err != nil {
+		return err
+	}
+
+	profilResponseDTO := mapToProfilResponseDTO(profil)
+	return context.JSON(http.StatusOK, profilResponseDTO)
 }
 
 func createProfil(context echo.Context) error {
