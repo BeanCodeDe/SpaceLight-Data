@@ -35,6 +35,8 @@ func main() {
 	e.Validator = &CustomValidator{validator: validator.New()}
 	profilGroup := e.Group(api.ProfilRootPath)
 	api.InitProfilInterface(profilGroup)
+	hangarGroup := e.Group(api.HangarRootPath)
+	api.InitHangarInterface(hangarGroup)
 	e.Logger.Fatal(e.Start(":1323"))
 }
 

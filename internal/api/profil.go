@@ -36,7 +36,8 @@ func getProfil(context echo.Context) error {
 
 	profil, err := core.LoadProfil(claims.UserId)
 	if err != nil {
-		return err
+		log.Warnf("Error while loading profil: %v", err)
+		return echo.ErrInternalServerError
 	}
 
 	profilResponseDTO := mapToProfilResponseDTO(profil)

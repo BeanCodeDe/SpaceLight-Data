@@ -1,10 +1,11 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/adapter"
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/db"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 )
 
 type (
@@ -15,22 +16,18 @@ type (
 )
 
 func (profil *ProfilCore) Create(password string) (*ProfilCore, error) {
-	log.Debug("Create Profil")
 	userId, err := adapter.CreateUser(password)
 	if err != nil {
-		log.Errorf("Something went wrong, while creating user in auth service: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("something went wrong, while creating user in auth service: %v", err)
 	}
 	profil.UserId = userId
 	err = profil.mapToProfilDB().Create()
 	if err != nil {
-		log.Errorf("Something went wrong, while persisting profil: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("something went wrong, while persisting profil: %v", err)
 	}
 	dbProfil, err := db.GetProfilById(profil.UserId)
 	if err != nil {
-		log.Errorf("Something went wrong, while getting profil: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("something went wrong, while getting profil: %v", err)
 	}
 	return mapToUserCore(dbProfil), nil
 }
@@ -38,8 +35,7 @@ func (profil *ProfilCore) Create(password string) (*ProfilCore, error) {
 func LoadProfil(userId uuid.UUID) (*ProfilCore, error) {
 	dbProfil, err := db.GetProfilById(userId)
 	if err != nil {
-		log.Errorf("Something went wrong, while getting profil: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("something went wrong, while getting profil: %v", err)
 	}
 	return mapToUserCore(dbProfil), nil
 }
