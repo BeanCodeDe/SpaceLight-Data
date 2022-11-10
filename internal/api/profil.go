@@ -48,13 +48,19 @@ func createProfil(context echo.Context) error {
 	log.Debugf("Create some profil")
 	profilCore, password, err := bindCreationDTO(context, new(profilCreateDTO))
 	if err != nil {
-		return err
+		log.Warnf("Error while mapping profil: %v", err)
+		return echo.ErrInternalServerError
 	}
 	createdProfil, err := profilCore.Create(password)
 	if err != nil {
-		return err
+		log.Warnf("Error while creating profil: %v", err)
+		return echo.ErrInternalServerError
 	}
-
+	core.CreateDefaultHangar(createdProfil.UserId)
+	if err != nil {
+		log.Warnf("Error while creating hangar: %v", err)
+		return echo.ErrInternalServerError
+	}
 	log.Debugf("Created profile %s with name %s", createdProfil.UserId, createdProfil.Name)
 	profilResponseDTO := mapToProfilResponseDTO(createdProfil)
 	return context.JSON(http.StatusCreated, profilResponseDTO)
