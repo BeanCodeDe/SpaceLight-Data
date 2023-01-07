@@ -1,0 +1,114 @@
+name: Audit_And_Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Verify dependencies
+      run: go mod verify
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Run go vet
+      run: go vet ./...
+
+    - name: Install staticcheck
+      run: go install honnef.co/go/tools/cmd/staticcheck@latest
+
+    - name: Run staticcheck
+      run: staticcheck ./...
+
+    - name: Init project
+      run: make init.token
+
+    - name: Unit test internal
+      run: go test -race -vet=off ./internal/...
+    
+    - name: Unit test pgk
+      run: go test -race -vet=off ./pkg/...
+  
+  journey_test_postgres:
+    needs: [audit]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+
+      - name: Init project
+        run: make init.token
+
+      - name: Start environment
+        run: docker compose --file ./deployments/docker-compose-postgres.yml up --build --quiet-pull -d
+        env: 
+          POSTGRES_PASSWORD:  ${{ secrets.POSTGRES_PASSWORD }}
+
+      - name: Journey tests
+        run: go test ./test -v
+      
+      - name: Shutdown environment
+        run: docker compose --file ./deployments/docker-compose-postgres.yml down
+
+  CodeQL-Build:
+    needs: [journey_test_postgres]
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with: 
+          languages: go
+
+      - name: Auto build
+        uses: github/codeql-action/autobuild@v2 
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [CodeQL-Build]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: '0'
+
+      - id: version_bump
+        name: Bump version and push tag
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build the Docker image
+        run: |
+          TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          docker build . -f ./build/Dockerfile --tag beancodede/authi:latest --tag beancodede/authi:${{ steps.version_bump.outputs.tag }}
+      
+      - name: Push the Docker image
+        run: docker push beancodede/authi --all-tags
