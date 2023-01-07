@@ -39,7 +39,7 @@ for row in elementList:
                     if element[0]== '-' and pos[0]==x and pos[1]==y-1:
                         toAddPos.append([x,y])
                         break
-                    elif element[2]== '-' and pos[0]==x-1 and  pos[1]==y:
+                    elif element[3]== '-' and pos[0]==x-1 and  pos[1]==y:
                         toAddPos.append([x,y])
                         break
                 room.pos += toAddPos
@@ -48,28 +48,28 @@ for row in elementList:
 
 print("rooms created")
 
+
+roomBlockId = 0
+roomId = 0
 roomString = "["
 for room in rooms:
-    minX = 999
-    minY = 999
-    maxX = -1
-    maxY = -1
-    for pos in room.pos:
-        if minX > pos[0]:
-            minX = pos[0]
-        if maxX < pos[0]:
-            maxX = pos[0]
-        if minY > pos[1]:
-            minY = pos[1]
-        if maxY < pos[1]:
-            maxY = pos[1]
-
     roomString += "{"
-    roomString += "\"PosX\":"+str(minX)+","
-    roomString += "\"PosY\":"+str(minY)+","
-    roomString += "\"SizeX\":"+str(maxX-minX)+","
-    roomString += "\"SizeY\":"+str(maxY-minY)
-    roomString += "},"
+    roomString += "\"Id\":"+str(roomId)+","
+    roomString += "\"RoomBlockList\": ["
 
+    for pos in room.pos:
+        roomString += "{"
+        roomString += "\"Id\":"+str(roomBlockId)+","
+        roomString += "\"PosX\":"+str(pos[0])+","
+        roomString += "\"PosY\":"+str(pos[1])
+        roomString += "},"
+        roomBlockId +=1
+   
+    roomString = roomString[:-1]
+    roomString += "]"
+    roomString += "},"
+    roomId += 1
+roomString = roomString[:-1]
 roomString += "]"
+print("ROOM STRING:")
 print(roomString)

@@ -18,20 +18,20 @@ type (
 	}
 
 	RoomPlace struct {
-		PosX  int
-		PosY  int
-		SizeX int
-		SizeY int
+		Id            int
+		RoomBlockList []*RoomBlock
 	}
 
 	RoomBlock struct {
+		Id   int
+		PosX int
+		PosY int
 	}
 
 	Door struct {
-		Type        string
-		Orientation string
-		PosX        int
-		PosY        int
+		Type           string
+		RoomBlockOneId int
+		RoomBlockTwoId int
 	}
 
 	WeaponPlace struct {
