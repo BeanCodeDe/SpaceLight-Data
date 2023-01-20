@@ -29,7 +29,6 @@ type (
 	}
 
 	Door struct {
-		Type           string
 		RoomBlockOneId int
 		RoomBlockTwoId int
 	}

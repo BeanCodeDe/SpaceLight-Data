@@ -1,75 +1,110 @@
 import csv
 import sys
+from typing import List
 
-class Room():
-    def __init__(self, x,y):
-       self.pos = [[x,y]]
+class RoomPlace():
+    def __init__(self, id):
+        self.id = id
+        self.roomBlockList = []
 
-print("Please input ship name:")
+    def addRoomBlock(self, roomBlock):
+        self.roomBlockList.append(roomBlock)
 
-shipName = input()
+    def getRoomId(self, x, y):
+        for roomBlock in self.roomBlockList:
+            if roomBlock.x == x and roomBlock.y == y:
+                return roomBlock.id
+        return -1
 
+class RoomBlock():
+    def __init__(self, id, x, y, roomDesc):
+        self.id = id
+        self.x = x
+        self.y = y
+        self.roomDesc = roomDesc
 
-with open('ship_type/'+shipName+'/room.csv', newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',', quotechar=' ')
-    elementList = []
-    for row in spamreader:
-        elementRow = []
+class Door():
+    def __init__(self, roomBlockOneId, roomBlockTwoId):
+        self.roomBlockOneId = roomBlockOneId
+        self.roomBlockTwoId = roomBlockTwoId
+
+def parseFileToElementList(shipName):
+    print("parseFileToElementList")
+    with open(shipName+'/ship.csv', newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar=' ')
+        elementList = []
+        for row in spamreader:
+            elementRow = []
+            for element in row:
+                length = len(element)
+                if element != '0' and length != 4:
+                    print("Element has not length of 4: "+ element)
+                elementRow.append(element)
+            elementList.append(elementRow)
+    return elementList
+
+def parseElementsListToRooms(elementList)-> List[RoomPlace]:
+    print("parseElementsListToRooms")
+    roomPlaceList = []
+    roomPlaceId = 0
+    roomBlockId = 0
+    y = 0
+    for row in elementList:
+        x = 0
         for element in row:
-            length = len(element)
-            if element != '0' and length != 4:
-                print("Element has not length of 4: "+ element)
-            elementRow.append(element)
-        elementList.append(elementRow)
+            if (element[0]=='D' or element[0]=='W') and (element[3]=='D' or element[3]=='W'):
+                room = RoomPlace(roomPlaceId)
+                roomPlaceId = 1 + roomPlaceId
+                roomBlock = RoomBlock(roomBlockId,x,y,element)
+                roomBlockId = 1 + roomBlockId
+                room.addRoomBlock(roomBlock)
+                roomPlaceList.append(room)
+            elif element != '0':
+                for room in roomPlaceList:
+                    for roomBlock in room.roomBlockList:
+                        if element[0]== '-' and roomBlock.x==x and roomBlock.y==y-1:
+                            roomBlock = RoomBlock(roomBlockId,x,y,element)
+                            roomBlockId = 1 + roomBlockId
+                            room.addRoomBlock(roomBlock)
+                            break
+                        elif element[3]== '-' and roomBlock.x==x-1 and roomBlock.y==y:
+                            roomBlock = RoomBlock(roomBlockId,x,y,element)
+                            roomBlockId = 1 + roomBlockId
+                            room.addRoomBlock(roomBlock)
+                            break
+            x += 1
+        y +=1
+    return roomPlaceList
 
-print("parsed csv")
+def parseRoomListToRoomJson(roomPlaceList: RoomPlace) -> str:
+    print("parseRoomListToRoomJson")
+    roomJson = "["
+    for roomPlace in roomPlaceList:
+        roomJson += "{"
+        roomJson += "\"Id\":"+str(roomPlace.id)+","
+        roomJson += "\"RoomBlockList\": ["
 
-rooms = []
-y = 0
-for row in elementList:
-    x = 0
-    for element in row:
-        if (element[0]=='D' or element[0]=='W') and (element[3]=='D' or element[3]=='W'):
-            room = Room(x,y)
-            rooms.append(room)
-        elif element != '0':
-            for room in rooms:
-                toAddPos = []
-                for pos in room.pos:
-                    if element[0]== '-' and pos[0]==x and pos[1]==y-1:
-                        toAddPos.append([x,y])
-                        break
-                    elif element[3]== '-' and pos[0]==x-1 and  pos[1]==y:
-                        toAddPos.append([x,y])
-                        break
-                room.pos += toAddPos
-        x += 1
-    y +=1
+        for roomBlock in roomPlace.roomBlockList:
+            roomJson += "{"
+            roomJson += "\"Id\":"+str(roomBlock.id)+","
+            roomJson += "\"PosX\":"+str(roomBlock.x)+","
+            roomJson += "\"PosY\":"+str(roomBlock.y)
+            roomJson += "},"
+    
+        roomJson = roomJson[:-1]
+        roomJson += "]"
+        roomJson += "},"
+    roomJson = roomJson[:-1]
+    roomJson += "]"
+    return roomJson
+    
+print("Please input ship name:")
+#shipName = input()
+shipName = "spacelight"
 
-print("rooms created")
+elementList = parseFileToElementList(shipName)
+roomPlaceList = parseElementsListToRooms(elementList)
+roomJson = parseRoomListToRoomJson(roomPlaceList)
 
-
-roomBlockId = 0
-roomId = 0
-roomString = "["
-for room in rooms:
-    roomString += "{"
-    roomString += "\"Id\":"+str(roomId)+","
-    roomString += "\"RoomBlockList\": ["
-
-    for pos in room.pos:
-        roomString += "{"
-        roomString += "\"Id\":"+str(roomBlockId)+","
-        roomString += "\"PosX\":"+str(pos[0])+","
-        roomString += "\"PosY\":"+str(pos[1])
-        roomString += "},"
-        roomBlockId +=1
-   
-    roomString = roomString[:-1]
-    roomString += "]"
-    roomString += "},"
-    roomId += 1
-roomString = roomString[:-1]
-roomString += "]"
 print("ROOM STRING:")
-print(roomString)
+print(roomJson)
