@@ -30,6 +30,7 @@ class Door():
 
 def parseFileToElementList(shipName):
     print("parseFileToElementList")
+    errorFile = False
     with open(shipName+'/ship.csv', newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',', quotechar=' ')
         elementList = []
@@ -39,8 +40,11 @@ def parseFileToElementList(shipName):
                 length = len(element)
                 if element != '0' and length != 4:
                     print("Element has not length of 4: "+ element)
+                    errorFile = True
                 elementRow.append(element)
             elementList.append(elementRow)
+    if errorFile:
+        sys.exit()
     return elementList
 
 def parseElementsListToRooms(elementList)-> List[RoomPlace]:
@@ -76,7 +80,7 @@ def parseElementsListToRooms(elementList)-> List[RoomPlace]:
         y +=1
     return roomPlaceList
 
-def parseRoomListToRoomJson(roomPlaceList: RoomPlace) -> str:
+def parseRoomListToRoomJson(roomPlaceList: List[RoomPlace]) -> str:
     print("parseRoomListToRoomJson")
     roomJson = "["
     for roomPlace in roomPlaceList:
@@ -97,6 +101,44 @@ def parseRoomListToRoomJson(roomPlaceList: RoomPlace) -> str:
     roomJson = roomJson[:-1]
     roomJson += "]"
     return roomJson
+
+def searchRoom(oomPlaceList: List[RoomPlace], x: int, y: int) -> RoomBlock:
+    for roomPlace in roomPlaceList:
+        for roomBlock in roomPlace.roomBlockList:
+            if roomBlock.x == x and roomBlock.y == y:
+                return roomBlock
+    print("No room found at position " + str(x) + " and " + str(y))
+    sys.exit()
+
+def parseRoomPlaceListToDoors(roomPlaceList: List[RoomPlace])-> List[Door]:
+    print("parseRoomPlaceListToDoors")
+    doorList = []
+    for roomPlace in roomPlaceList:
+        for roomBlock in roomPlace.roomBlockList:
+            if roomBlock.roomDesc[1] == 'D':
+                foundRoomBlock = searchRoom(roomPlaceList, roomBlock.x+1, roomBlock.y)
+                door = Door(roomBlock.id, foundRoomBlock.id)
+                doorList.append(door)
+            if roomBlock.roomDesc[2] == 'D':
+                foundRoomBlock = searchRoom(roomPlaceList, roomBlock.x, roomBlock.y+1)
+                door = Door(roomBlock.id, foundRoomBlock.id)
+                doorList.append(door)
+    return doorList
+
+
+def parseRoomListToDoorJson(doorList: List[Door]) -> str:
+    print("parseRoomListToDoorJson")
+    doorJson = "["
+    for door in doorList:
+        doorJson += "{"
+        doorJson += "\"RoomBlockOneId\":"+str(door.roomBlockOneId)+","
+        doorJson += "\"RoomBlockTwoId\":"+str(door.roomBlockTwoId)+","
+        doorJson = doorJson[:-1]
+        doorJson += "]"
+        doorJson += "},"
+    doorJson = doorJson[:-1]
+    doorJson += "]"
+    return doorJson
     
 print("Please input ship name:")
 #shipName = input()
@@ -108,3 +150,9 @@ roomJson = parseRoomListToRoomJson(roomPlaceList)
 
 print("ROOM STRING:")
 print(roomJson)
+
+doorList = parseRoomPlaceListToDoors(roomPlaceList)
+doorJson = parseRoomListToDoorJson(doorList)
+
+print("DOOR TRING:")
+print(doorJson)
