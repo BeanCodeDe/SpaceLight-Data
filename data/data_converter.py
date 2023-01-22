@@ -107,8 +107,7 @@ def searchRoom(oomPlaceList: List[RoomPlace], x: int, y: int) -> RoomBlock:
         for roomBlock in roomPlace.roomBlockList:
             if roomBlock.x == x and roomBlock.y == y:
                 return roomBlock
-    print("No room found at position " + str(x) + " and " + str(y))
-    sys.exit()
+    return None
 
 def parseRoomPlaceListToDoors(roomPlaceList: List[RoomPlace])-> List[Door]:
     print("parseRoomPlaceListToDoors")
@@ -117,10 +116,16 @@ def parseRoomPlaceListToDoors(roomPlaceList: List[RoomPlace])-> List[Door]:
         for roomBlock in roomPlace.roomBlockList:
             if roomBlock.roomDesc[1] == 'D':
                 foundRoomBlock = searchRoom(roomPlaceList, roomBlock.x+1, roomBlock.y)
+                if foundRoomBlock == None:
+                    print("No matching door found from room ("+str(roomBlock.x)+" | "+str(roomBlock.y)+") with description "+ roomBlock.roomDesc+" to room ("+str(roomBlock.x+1)+" | "+str(roomBlock.y)+")")
+                    sys.exit()
                 door = Door(roomBlock.id, foundRoomBlock.id)
                 doorList.append(door)
             if roomBlock.roomDesc[2] == 'D':
                 foundRoomBlock = searchRoom(roomPlaceList, roomBlock.x, roomBlock.y+1)
+                if foundRoomBlock == None:
+                    print("No matching door found from room ("+str(roomBlock.x)+" | "+str(roomBlock.y)+") with description "+ roomBlock.roomDesc+" to room ("+str(roomBlock.x)+" | "+str(roomBlock.y+1)+")")
+                    sys.exit()
                 door = Door(roomBlock.id, foundRoomBlock.id)
                 doorList.append(door)
     return doorList
@@ -154,5 +159,5 @@ print(roomJson)
 doorList = parseRoomPlaceListToDoors(roomPlaceList)
 doorJson = parseRoomListToDoorJson(doorList)
 
-print("DOOR TRING:")
+print("DOOR STRING:")
 print(doorJson)
