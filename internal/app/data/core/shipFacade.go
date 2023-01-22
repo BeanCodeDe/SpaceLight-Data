@@ -21,10 +21,6 @@ func (core *CoreFacade) GetAllShipTypes() ([]*ShipType, error) {
 }
 
 func mapToShipType(shipType *db.ShipType) *ShipType {
-	roomPlaceList := make([]*RoomPlace, len(shipType.RoomPlaceList))
-	for index, roomPlace := range shipType.RoomPlaceList {
-		roomPlaceList[index] = mapToRoomPlace(roomPlace)
-	}
 
 	doorList := make([]*Door, len(shipType.DoorList))
 	for index, door := range shipType.DoorList {
@@ -39,22 +35,48 @@ func mapToShipType(shipType *db.ShipType) *ShipType {
 	return &ShipType{
 		Id:              shipType.Id,
 		Name:            shipType.Name,
-		RoomPlaceList:   roomPlaceList,
+		RoomPlaceList:   mapToRoomPlaceList(shipType.RoomPlaceList),
 		DoorList:        doorList,
 		WeaponPlaceList: weaponPlaceList,
 	}
 }
 
+func mapToRoomPlaceList(dbRoomPlaceList []*db.RoomPlace) []*RoomPlace {
+	roomPlaceList := make([]*RoomPlace, len(dbRoomPlaceList))
+	for index, roomPlace := range dbRoomPlaceList {
+		roomPlaceList[index] = mapToRoomPlace(roomPlace)
+	}
+	return roomPlaceList
+}
+
 func mapToRoomPlace(roomPlace *db.RoomPlace) *RoomPlace {
-	return &RoomPlace{PosX: roomPlace.PosX, PosY: roomPlace.PosY}
+	return &RoomPlace{Id: roomPlace.Id, RoomBlockList: mapToRoomBlockList(roomPlace.RoomBlockList)}
+}
+
+func mapToRoomBlockList(dbRoomBlockList []*db.RoomBlock) []*RoomBlock {
+	roomBlockList := make([]*RoomBlock, len(dbRoomBlockList))
+	for index, roomBlock := range dbRoomBlockList {
+		roomBlockList[index] = mapToRoomBlock(roomBlock)
+	}
+	return roomBlockList
+}
+
+func mapToRoomBlock(dbRoomBlock *db.RoomBlock) *RoomBlock {
+	return &RoomBlock{Id: dbRoomBlock.Id, PosX: dbRoomBlock.PosX, PosY: dbRoomBlock.PosY}
+}
+
+func mapToDoorList(dbDoorList []*db.Door) []*Door {
+	doorList := make([]*Door, len(dbDoorList))
+	for index, door := range dbDoorList {
+		doorList[index] = mapToDoor(door)
+	}
+	return doorList
 }
 
 func mapToDoor(door *db.Door) *Door {
 	return &Door{
-		Type:        door.Type,
-		Orientation: door.Orientation,
-		PosX:        door.PosX,
-		PosY:        door.PosY,
+		RoomBlockOneId: door.RoomBlockOneId,
+		RoomBlockTwoId: door.RoomBlockTwoId,
 	}
 }
 

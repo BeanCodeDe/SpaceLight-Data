@@ -21,15 +21,19 @@ type (
 	}
 
 	RoomPlaceDTO struct {
+		Id            int
+		RoomBlockList []*RoomBlockDTO
+	}
+
+	RoomBlockDTO struct {
+		Id   int
 		PosX int
 		PosY int
 	}
 
 	DoorDTO struct {
-		Type        string
-		Orientation string
-		PosX        int
-		PosY        int
+		RoomBlockOneId int
+		RoomBlockTwoId int
 	}
 
 	WeaponPlaceDTO struct {
@@ -58,10 +62,6 @@ func (api *EchoApi) getAllShipTypes(context echo.Context) error {
 }
 
 func mapToShipType(shipType *core.ShipType) *ShipTypeDTO {
-	roomPlaceList := make([]*RoomPlaceDTO, len(shipType.RoomPlaceList))
-	for index, roomPlace := range shipType.RoomPlaceList {
-		roomPlaceList[index] = mapToRoomPlace(roomPlace)
-	}
 
 	doorList := make([]*DoorDTO, len(shipType.DoorList))
 	for index, door := range shipType.DoorList {
@@ -76,22 +76,48 @@ func mapToShipType(shipType *core.ShipType) *ShipTypeDTO {
 	return &ShipTypeDTO{
 		Id:              shipType.Id,
 		Name:            shipType.Name,
-		RoomPlaceList:   roomPlaceList,
+		RoomPlaceList:   mapToRoomPlaceList(shipType.RoomPlaceList),
 		DoorList:        doorList,
 		WeaponPlaceList: weaponPlaceList,
 	}
 }
 
+func mapToRoomPlaceList(coreRoomPlaceList []*core.RoomPlace) []*RoomPlaceDTO {
+	roomPlaceList := make([]*RoomPlaceDTO, len(coreRoomPlaceList))
+	for index, roomPlace := range coreRoomPlaceList {
+		roomPlaceList[index] = mapToRoomPlace(roomPlace)
+	}
+	return roomPlaceList
+}
+
 func mapToRoomPlace(roomPlace *core.RoomPlace) *RoomPlaceDTO {
-	return &RoomPlaceDTO{PosX: roomPlace.PosX, PosY: roomPlace.PosY}
+	return &RoomPlaceDTO{Id: roomPlace.Id, RoomBlockList: mapToRoomBlockList(roomPlace.RoomBlockList)}
+}
+
+func mapToRoomBlockList(coreRoomBlockList []*core.RoomBlock) []*RoomBlockDTO {
+	roomBlockList := make([]*RoomBlockDTO, len(coreRoomBlockList))
+	for index, roomBlock := range coreRoomBlockList {
+		roomBlockList[index] = mapToRoomBlock(roomBlock)
+	}
+	return roomBlockList
+}
+
+func mapToRoomBlock(coreRoomBlock *core.RoomBlock) *RoomBlockDTO {
+	return &RoomBlockDTO{Id: coreRoomBlock.Id, PosX: coreRoomBlock.PosX, PosY: coreRoomBlock.PosY}
+}
+
+func mapToDoorList(coreDoorList []*core.Door) []*DoorDTO {
+	doorList := make([]*DoorDTO, len(coreDoorList))
+	for index, door := range coreDoorList {
+		doorList[index] = mapToDoor(door)
+	}
+	return doorList
 }
 
 func mapToDoor(door *core.Door) *DoorDTO {
 	return &DoorDTO{
-		Type:        door.Type,
-		Orientation: door.Orientation,
-		PosX:        door.PosX,
-		PosY:        door.PosY,
+		RoomBlockOneId: door.RoomBlockOneId,
+		RoomBlockTwoId: door.RoomBlockTwoId,
 	}
 }
 
