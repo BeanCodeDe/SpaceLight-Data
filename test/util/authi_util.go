@@ -6,16 +6,21 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 )
 
 const (
-	PublicKeyFile  = "./data/token/public/jwtRS256.key.pub"
-	PrivateKeyFile = "./data/token/privat/jwtRS256.key"
+	PublicKeyFile  = "./../deployments/token/jwtRS256.key.pub"
+	PrivateKeyFile = "./../deployments/token/jwtRS256.key"
 )
 
 type Claims struct {
 	UserId string `json:"user_id"`
 	jwt.StandardClaims
+}
+
+func CreateUserId() string {
+	return uuid.New().String()
 }
 
 func CreateJWTToken(userId string) string {

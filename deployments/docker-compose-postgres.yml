@@ -20,6 +20,7 @@ services:
     restart: always
     environment: 
       - POSTGRES_PASSWORD=myDatabasePassword
+      - LOG_LEVEL=debug
     ports:
       - 1203:1203
     volumes: 

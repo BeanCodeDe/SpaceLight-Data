@@ -64,7 +64,7 @@ func (api *EchoApi) createProfil(context echo.Context) error {
 		return echo.ErrUnauthorized
 	}
 
-	profileCore, err := bindCreationDTO(context, new(ProfileCreateDTO))
+	profileCore, err := bindCreationDTO(context, new(ProfileCreateDTO), userId)
 	if err != nil {
 		log.Warnf("Error while mapping profil: %v", err)
 		return echo.ErrBadRequest
@@ -79,12 +79,12 @@ func (api *EchoApi) createProfil(context echo.Context) error {
 	return context.NoContent(http.StatusCreated)
 }
 
-func bindCreationDTO(context echo.Context, toBindProfil *ProfileCreateDTO) (*core.Profile, error) {
+func bindCreationDTO(context echo.Context, toBindProfil *ProfileCreateDTO, userId uuid.UUID) (*core.Profile, error) {
 	if err := context.Bind(toBindProfil); err != nil {
 		return nil, fmt.Errorf("could not bind profil, %w", err)
 	}
 	if err := context.Validate(toBindProfil); err != nil {
 		return nil, fmt.Errorf("could not validate profil, %w", err)
 	}
-	return &core.Profile{Name: toBindProfil.Name}, nil
+	return &core.Profile{Name: toBindProfil.Name, UserId: userId}, nil
 }

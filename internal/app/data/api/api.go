@@ -50,7 +50,7 @@ func NewApi() (Api, error) {
 	shipsGroup := e.Group(ProfilRootPath)
 	initShipsInterface(shipsGroup, echoApi)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":1203"))
 	return echoApi, nil
 }
 
@@ -66,7 +66,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return cv.validator.Struct(i)
 }
 func checkUserId(userId uuid.UUID, context echo.Context) error {
-	claims := context.Get(adapter.ClaimName).(*adapter.Claims)
+	claims := context.Get(adapter.ClaimName).(adapter.Claims)
 	if claims.UserId != userId {
 		return fmt.Errorf("user id of claim [%v] doesn't match user id from request [%v]", claims.UserId, userId)
 	}

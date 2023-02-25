@@ -36,6 +36,7 @@ func sendCreateProfileRequest(userId string, profileCreate *api.ProfileCreateDTO
 	}
 
 	req.Header.Set(CorrelationId, uuid.NewString())
+	req.Header.Set(ContentTyp, ContentTypValue)
 	req.Header.Set(adapter.AuthorizationHeaderName, "Bearer "+token)
 	resp, err := client.Do(req)
 
