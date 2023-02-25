@@ -14,11 +14,11 @@ import (
 const ProfilRootPath = "/profiles"
 
 type (
-	profileCreateDTO struct {
+	ProfileCreateDTO struct {
 		Name string `json:"Name" validate:"required,alphanum"`
 	}
 
-	profileResponseDTO struct {
+	ProfileResponseDTO struct {
 		UserId uuid.UUID
 		Name   string
 	}
@@ -47,7 +47,7 @@ func (api *EchoApi) getProfil(context echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	profilResponseDTO := &profileResponseDTO{UserId: profil.UserId, Name: profil.Name}
+	profilResponseDTO := &ProfileResponseDTO{UserId: profil.UserId, Name: profil.Name}
 	return context.JSON(http.StatusOK, profilResponseDTO)
 }
 
@@ -64,7 +64,7 @@ func (api *EchoApi) createProfil(context echo.Context) error {
 		return echo.ErrUnauthorized
 	}
 
-	profileCore, err := bindCreationDTO(context, new(profileCreateDTO))
+	profileCore, err := bindCreationDTO(context, new(ProfileCreateDTO), userId)
 	if err != nil {
 		log.Warnf("Error while mapping profil: %v", err)
 		return echo.ErrBadRequest
@@ -79,12 +79,12 @@ func (api *EchoApi) createProfil(context echo.Context) error {
 	return context.NoContent(http.StatusCreated)
 }
 
-func bindCreationDTO(context echo.Context, toBindProfil *profileCreateDTO) (*core.Profile, error) {
+func bindCreationDTO(context echo.Context, toBindProfil *ProfileCreateDTO, userId uuid.UUID) (*core.Profile, error) {
 	if err := context.Bind(toBindProfil); err != nil {
 		return nil, fmt.Errorf("could not bind profil, %w", err)
 	}
 	if err := context.Validate(toBindProfil); err != nil {
 		return nil, fmt.Errorf("could not validate profil, %w", err)
 	}
-	return &core.Profile{Name: toBindProfil.Name}, nil
+	return &core.Profile{Name: toBindProfil.Name, UserId: userId}, nil
 }

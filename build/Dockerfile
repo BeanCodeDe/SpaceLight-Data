@@ -1,4 +1,4 @@
-FROM golang:1.18.3 as development
+FROM golang:1.20.1 as development
 
 WORKDIR /app
 
@@ -7,10 +7,10 @@ RUN go mod download
 
 COPY . .
 ENV CGO_ENABLED=0
-RUN make build
+RUN make app.build
 
 FROM alpine:3.14
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
-COPY --from=0 /app/spacelight ./
-CMD ["./spacelight"]  
+COPY --from=0 /app/spacelight-data ./
+CMD ["./spacelight-data"]  

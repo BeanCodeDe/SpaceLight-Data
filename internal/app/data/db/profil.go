@@ -23,7 +23,7 @@ type (
 )
 
 func (db *postgresConnection) CreateProfile(profile *ProfileDB) error {
-	if _, err := db.dbPool.Exec(context.Background(), "INSERT INTO spacelight.profil(user_id, name) VALUES($1, $2)", profile.UserId, profile.Name); err != nil {
+	if _, err := db.dbPool.Exec(context.Background(), "INSERT INTO spacelight_data.profile(user_id, name) VALUES($1, $2)", profile.UserId, profile.Name); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
@@ -44,7 +44,7 @@ func (db *postgresConnection) GetProfileById(userId uuid.UUID) (*ProfileDB, erro
 	}
 
 	if len(profiles) != 1 {
-		return nil, fmt.Errorf("cant find only one profil. ProfilLists: %v", profiles)
+		return nil, fmt.Errorf("cant find only one profile. ProfilLists: %v", profiles)
 	}
 
 	return profiles[0], nil

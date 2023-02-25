@@ -15,7 +15,7 @@ func main() {
 	log.Info("Start Server")
 	_, err := api.NewApi()
 	if err != nil {
-		log.Fatal("Error while starting api: %w", err)
+		log.Fatal("Error while starting api: ", err)
 	}
 }
 
