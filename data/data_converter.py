@@ -137,9 +137,7 @@ def parseRoomListToDoorJson(doorList: List[Door]) -> str:
     for door in doorList:
         doorJson += "{"
         doorJson += "\"RoomBlockOneId\":"+str(door.roomBlockOneId)+","
-        doorJson += "\"RoomBlockTwoId\":"+str(door.roomBlockTwoId)+","
-        doorJson = doorJson[:-1]
-        doorJson += "]"
+        doorJson += "\"RoomBlockTwoId\":"+str(door.roomBlockTwoId)
         doorJson += "},"
     doorJson = doorJson[:-1]
     doorJson += "]"
