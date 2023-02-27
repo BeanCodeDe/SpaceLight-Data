@@ -18,7 +18,7 @@ func (core *CoreFacade) CreateProfile(profile *Profile) error {
 				return fmt.Errorf("something went wrong while checking if user [%v] is already created: %w", profile.UserId, err)
 			}
 
-			if profile.Name == foundProfile.Name {
+			if profile.Name != foundProfile.Name {
 				return fmt.Errorf("profile name of request [%v] doesn't match name from database [%v]", profile.Name, foundProfile.Name)
 			}
 
