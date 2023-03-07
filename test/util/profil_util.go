@@ -19,15 +19,15 @@ const (
 	UserPath = "/profiles/%s"
 )
 
-func CreateProfile_Automated(t *testing.T) (string, string, string) {
-	randomUserName := RandomString(8)
+func CreateProfile_Automated(t *testing.T) (userId string, randomUserName string, token string) {
+	randomUserName = RandomString(8)
 
-	userId := CreateUserId()
-	token := CreateJWTToken(userId)
+	userId = CreateUserId()
+	token = CreateJWTToken(userId)
 	profileCreationDto := &api.ProfileCreateDTO{Name: randomUserName}
 	status := CreateProfile(userId, profileCreationDto, token)
 	assert.Equal(t, 201, status)
-	return userId, randomUserName, token
+	return
 }
 
 func CreateProfile(userId string, profileCreate *api.ProfileCreateDTO, token string) int {
