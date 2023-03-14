@@ -47,7 +47,7 @@ func NewApi() (Api, error) {
 	profilesGroup := e.Group(ProfilRootPath)
 	initProfilInterface(profilesGroup, echoApi)
 
-	shipsGroup := e.Group(ProfilRootPath)
+	shipsGroup := e.Group(ShipRootPath)
 	initShipsInterface(shipsGroup, echoApi)
 
 	e.Logger.Fatal(e.Start(":1203"))
