@@ -15,7 +15,7 @@ const (
 	ShipPath = "/ships"
 )
 
-func GetShips(token string) (int, []api.ShipTypeDTO) {
+func GetShips(token string) (int, *[]api.ShipTypeDTO) {
 	response := sendGetShipsRequest(token)
 	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
@@ -27,8 +27,7 @@ func GetShips(token string) (int, []api.ShipTypeDTO) {
 		fmt.Printf("Could not parse response Body: %v", err)
 		return -1, nil
 	}
-
-	shipsResponse := []api.ShipTypeDTO{}
+	shipsResponse := &[]api.ShipTypeDTO{}
 	json.Unmarshal(bodyBytes, shipsResponse)
 	return response.StatusCode, shipsResponse
 }
