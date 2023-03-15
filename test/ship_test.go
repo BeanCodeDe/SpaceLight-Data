@@ -13,3 +13,8 @@ func TestGetShips(t *testing.T) {
 	assert.Equal(t, 200, status)
 	assert.Equal(t, 1, len(*ships))
 }
+
+func TestGetShips_WithoutToken(t *testing.T) {
+	status, _ := util.GetShips("")
+	assert.Equal(t, 401, status)
+}
