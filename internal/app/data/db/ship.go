@@ -42,7 +42,7 @@ type (
 func (db *postgresConnection) GetAllShipTypes() ([]*ShipType, error) {
 	var shipTypes []*ShipType
 	if err := pgxscan.Select(context.Background(), db.dbPool, &shipTypes, `SELECT id, name, rome_place_list, door_list, weapon_place_list FROM spacelight_data.ship_type`); err != nil {
-		return nil, fmt.Errorf("error while selecting all ship types: %w", err)
+		return nil, fmt.Errorf("error while selecting all ship types: %v", err)
 	}
 
 	return shipTypes, nil

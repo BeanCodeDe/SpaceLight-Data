@@ -31,12 +31,12 @@ type (
 func NewApi() (Api, error) {
 	core, err := core.NewCore()
 	if err != nil {
-		return nil, fmt.Errorf("error while creating core layer: %w", err)
+		return nil, fmt.Errorf("error while creating core layer: %v", err)
 	}
 
 	authMiddleware, err := initAuthMiddleware()
 	if err != nil {
-		return nil, fmt.Errorf("error while creating auth middleware: %w", err)
+		return nil, fmt.Errorf("error while creating auth middleware: %v", err)
 	}
 
 	echoApi := &EchoApi{core: core}
@@ -57,7 +57,7 @@ func NewApi() (Api, error) {
 func initAuthMiddleware() (middleware.Middleware, error) {
 	tokenParser, err := parser.NewJWTParser()
 	if err != nil {
-		return nil, fmt.Errorf("error while init auth middleware: %w", err)
+		return nil, fmt.Errorf("error while init auth middleware: %v", err)
 	}
 	return middleware.NewEchoMiddleware(tokenParser), nil
 }
@@ -76,7 +76,7 @@ func checkUserId(userId uuid.UUID, context echo.Context) error {
 func getUserId(context echo.Context) (uuid.UUID, error) {
 	userId, err := uuid.Parse(context.Param(userIdParam))
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("error while binding userId: %w", err)
+		return uuid.Nil, fmt.Errorf("error while binding userId: %v", err)
 	}
 	return userId, nil
 }

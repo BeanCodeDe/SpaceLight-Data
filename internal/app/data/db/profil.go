@@ -40,7 +40,7 @@ func (db *postgresConnection) CreateProfile(profile *ProfileDB) error {
 func (db *postgresConnection) GetProfileById(userId uuid.UUID) (*ProfileDB, error) {
 	var profiles []*ProfileDB
 	if err := pgxscan.Select(context.Background(), db.dbPool, &profiles, `SELECT user_id, name FROM spacelight_data.profile WHERE user_id = $1`, userId); err != nil {
-		return nil, fmt.Errorf("error while selecting user with id %v: %w", userId, err)
+		return nil, fmt.Errorf("error while selecting user with id %v: %v", userId, err)
 	}
 
 	if len(profiles) != 1 {

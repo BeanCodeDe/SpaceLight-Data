@@ -31,20 +31,20 @@ func newPostgresConnection() (DB, error) {
 	dbName := util.GetEnvWithFallback("POSTGRES_DB", "postgres")
 	password, err := util.GetEnv("POSTGRES_PASSWORD")
 	if err != nil {
-		return nil, fmt.Errorf("postgres password has to be set: %w", err)
+		return nil, fmt.Errorf("postgres password has to be set: %v", err)
 	}
 	host := util.GetEnvWithFallback("POSTGRES_HOST", "postgres")
 	port, err := util.GetEnvIntWithFallback("POSTGRES_PORT", 5432)
 	options := util.GetEnvWithFallback("POSTGRES_OPTIONS", "sslmode=disable")
 
 	if err != nil {
-		return nil, fmt.Errorf("port is not a number: %w", err)
+		return nil, fmt.Errorf("port is not a number: %v", err)
 	}
 
 	url := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?%s", user, password, host, port, dbName, options)
 	err = migratePostgresDatabase(url)
 	if err != nil {
-		return nil, fmt.Errorf("error while migrating database: %w", err)
+		return nil, fmt.Errorf("error while migrating database: %v", err)
 	}
 
 	dbPool, err := pgxpool.Connect(context.Background(), url)
@@ -61,18 +61,18 @@ func (connection *postgresConnection) Close() {
 func migratePostgresDatabase(url string) error {
 	d, err := iofs.New(postgresMigrationFs, "migration/postgres")
 	if err != nil {
-		return fmt.Errorf("error while creating instance of migration scrips: %w", err)
+		return fmt.Errorf("error while creating instance of migration scrips: %v", err)
 	}
 	m, err := migrate.NewWithSourceInstance("iofs", d, url)
 	if err != nil {
-		return fmt.Errorf("error while creating instance of migration scrips: %w", err)
+		return fmt.Errorf("error while creating instance of migration scrips: %v", err)
 	}
 	err = m.Up()
 	if err != nil {
 		if errors.Is(err, migrate.ErrNoChange) {
 			return nil
 		}
-		return fmt.Errorf("error while migrating: %w", err)
+		return fmt.Errorf("error while migrating: %v", err)
 	}
 	return nil
 }

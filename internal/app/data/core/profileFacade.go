@@ -15,7 +15,7 @@ func (core *CoreFacade) CreateProfile(profile *Profile) error {
 		if errors.Is(err, db.ErrProfileAlreadyExists) {
 			foundProfile, err := core.db.GetProfileById(profile.UserId)
 			if err != nil {
-				return fmt.Errorf("something went wrong while checking if user [%v] is already created: %w", profile.UserId, err)
+				return fmt.Errorf("something went wrong while checking if user [%v] is already created: %v", profile.UserId, err)
 			}
 
 			if profile.Name != foundProfile.Name {
@@ -33,7 +33,7 @@ func (core *CoreFacade) CreateProfile(profile *Profile) error {
 func (core *CoreFacade) GetProfile(userId uuid.UUID) (*Profile, error) {
 	dbProfil, err := core.db.GetProfileById(userId)
 	if err != nil {
-		return nil, fmt.Errorf("something went wrong, while getting profil: %ws", err)
+		return nil, fmt.Errorf("something went wrong, while getting profil: %vs", err)
 	}
 	return &Profile{UserId: dbProfil.UserId, Name: dbProfil.Name}, nil
 }

@@ -49,7 +49,7 @@ func initShipsInterface(group *echo.Group, api *EchoApi) {
 func (api *EchoApi) getAllShipTypes(context echo.Context) error {
 	shipTypeList, err := api.core.GetAllShipTypes()
 	if err != nil {
-		log.Warnf("Error while loading ship types: %w", err)
+		log.Warnf("Error while loading ship types: %v", err)
 		return echo.ErrInternalServerError
 	}
 

@@ -9,7 +9,7 @@ import (
 func (core *CoreFacade) GetAllShipTypes() ([]*ShipType, error) {
 	shipTypeList, err := core.db.GetAllShipTypes()
 	if err != nil {
-		return nil, fmt.Errorf("error while getting all ship types from database: %w", err)
+		return nil, fmt.Errorf("error while getting all ship types from database: %v", err)
 	}
 
 	mappedShipTypeList := make([]*ShipType, len(shipTypeList))

@@ -33,17 +33,17 @@ func (api *EchoApi) getProfil(context echo.Context) error {
 	log.Debugf("Get Profile")
 	userId, err := getUserId(context)
 	if err != nil {
-		log.Warnf("Error while getting user id: %w", err)
+		log.Warnf("Error while getting user id: %v", err)
 		return echo.ErrBadRequest
 	}
 	if err := checkUserId(userId, context); err != nil {
-		log.Warnf("Error while checking user id: %w", err)
+		log.Warnf("Error while checking user id: %v", err)
 		return echo.ErrUnauthorized
 	}
 
 	profil, err := api.core.GetProfile(userId)
 	if err != nil {
-		log.Warnf("Error while loading profil: %w", err)
+		log.Warnf("Error while loading profil: %v", err)
 		return echo.ErrInternalServerError
 	}
 
@@ -55,12 +55,12 @@ func (api *EchoApi) createProfil(context echo.Context) error {
 	log.Debugf("Create some profil")
 	userId, err := getUserId(context)
 	if err != nil {
-		log.Warnf("Error while getting user id: %w", err)
+		log.Warnf("Error while getting user id: %v", err)
 		return echo.ErrBadRequest
 	}
 
 	if err := checkUserId(userId, context); err != nil {
-		log.Warnf("Error while checking user id: %w", err)
+		log.Warnf("Error while checking user id: %v", err)
 		return echo.ErrUnauthorized
 	}
 
@@ -81,10 +81,10 @@ func (api *EchoApi) createProfil(context echo.Context) error {
 
 func bindCreationDTO(context echo.Context, toBindProfil *ProfileCreateDTO, userId uuid.UUID) (*core.Profile, error) {
 	if err := context.Bind(toBindProfil); err != nil {
-		return nil, fmt.Errorf("could not bind profil, %w", err)
+		return nil, fmt.Errorf("could not bind profil, %v", err)
 	}
 	if err := context.Validate(toBindProfil); err != nil {
-		return nil, fmt.Errorf("could not validate profil, %w", err)
+		return nil, fmt.Errorf("could not validate profil, %v", err)
 	}
 	return &core.Profile{Name: toBindProfil.Name, UserId: userId}, nil
 }
