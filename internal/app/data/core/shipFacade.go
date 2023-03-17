@@ -22,22 +22,12 @@ func (core *CoreFacade) GetAllShipTypes() ([]*ShipType, error) {
 
 func mapToShipType(shipType *db.ShipType) *ShipType {
 
-	doorList := make([]*Door, len(shipType.DoorList))
-	for index, door := range shipType.DoorList {
-		doorList[index] = mapToDoor(door)
-	}
-
-	weaponPlaceList := make([]*WeaponPlace, len(shipType.WeaponPlaceList))
-	for index, weaponPlace := range shipType.WeaponPlaceList {
-		weaponPlaceList[index] = mapToWeaponPlace(weaponPlace)
-	}
-
 	return &ShipType{
 		Id:              shipType.Id,
 		Name:            shipType.Name,
 		RoomPlaceList:   mapToRoomPlaceList(shipType.RoomPlaceList),
-		DoorList:        doorList,
-		WeaponPlaceList: weaponPlaceList,
+		DoorList:        mapToDoorList(shipType.DoorList),
+		WeaponPlaceList: mapToWeaponPlaceList(shipType.WeaponPlaceList),
 	}
 }
 
@@ -78,6 +68,14 @@ func mapToDoor(door *db.Door) *Door {
 		RoomBlockOneId: door.RoomBlockOneId,
 		RoomBlockTwoId: door.RoomBlockTwoId,
 	}
+}
+
+func mapToWeaponPlaceList(dbWeaponPlaceList []*db.WeaponPlace) []*WeaponPlace {
+	weaponPlaceList := make([]*WeaponPlace, len(dbWeaponPlaceList))
+	for index, weaponPlace := range dbWeaponPlaceList {
+		weaponPlaceList[index] = mapToWeaponPlace(weaponPlace)
+	}
+	return weaponPlaceList
 }
 
 func mapToWeaponPlace(weaponPlace *db.WeaponPlace) *WeaponPlace {

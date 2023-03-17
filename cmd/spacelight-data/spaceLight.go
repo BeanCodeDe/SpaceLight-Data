@@ -3,8 +3,6 @@ package main
 import (
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/app/data/api"
 	"github.com/BeanCodeDe/SpaceLight-Data/internal/app/data/config"
-	"github.com/BeanCodeDe/authi/pkg/middleware"
-	"github.com/BeanCodeDe/authi/pkg/parser"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -32,13 +30,4 @@ func setLogLevel(logLevel string) {
 		log.Errorf("Log level %s unknow", logLevel)
 	}
 
-}
-
-func initAuthMiddleware() middleware.Middleware {
-	tokenParser, err := parser.NewJWTParser()
-	if err != nil {
-		log.Fatalf("Error while init auth middleware: %v", err)
-		return nil
-	}
-	return middleware.NewEchoMiddleware(tokenParser)
 }

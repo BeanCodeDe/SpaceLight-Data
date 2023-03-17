@@ -62,23 +62,12 @@ func (api *EchoApi) getAllShipTypes(context echo.Context) error {
 }
 
 func mapToShipType(shipType *core.ShipType) *ShipTypeDTO {
-
-	doorList := make([]*DoorDTO, len(shipType.DoorList))
-	for index, door := range shipType.DoorList {
-		doorList[index] = mapToDoor(door)
-	}
-
-	weaponPlaceList := make([]*WeaponPlaceDTO, len(shipType.WeaponPlaceList))
-	for index, weaponPlace := range shipType.WeaponPlaceList {
-		weaponPlaceList[index] = mapToWeaponPlace(weaponPlace)
-	}
-
 	return &ShipTypeDTO{
 		Id:              shipType.Id,
 		Name:            shipType.Name,
 		RoomPlaceList:   mapToRoomPlaceList(shipType.RoomPlaceList),
-		DoorList:        doorList,
-		WeaponPlaceList: weaponPlaceList,
+		DoorList:        mapToDoorList(shipType.DoorList),
+		WeaponPlaceList: mapToWeaponList(shipType.WeaponPlaceList),
 	}
 }
 
@@ -119,6 +108,14 @@ func mapToDoor(door *core.Door) *DoorDTO {
 		RoomBlockOneId: door.RoomBlockOneId,
 		RoomBlockTwoId: door.RoomBlockTwoId,
 	}
+}
+
+func mapToWeaponList(coreWeaponPlaceList []*core.WeaponPlace) []*WeaponPlaceDTO {
+	weaponPlaceList := make([]*WeaponPlaceDTO, len(coreWeaponPlaceList))
+	for index, weaponPlace := range coreWeaponPlaceList {
+		weaponPlaceList[index] = mapToWeaponPlace(weaponPlace)
+	}
+	return weaponPlaceList
 }
 
 func mapToWeaponPlace(weaponPlace *core.WeaponPlace) *WeaponPlaceDTO {
